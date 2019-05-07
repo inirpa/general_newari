@@ -9,8 +9,10 @@ class Relationship extends StatefulWidget {
 class _RelationshipState extends State<Relationship> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text("Relationship"),
+      ),
     );
   }
 }
