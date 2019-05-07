@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+// pages
+import './relationship.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -70,6 +73,31 @@ class _MyHomePageState extends State<MyHomePage> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
+      ),
+      drawer: new Drawer(
+        child: ListView(
+          children: <Widget>[
+            new ListTile(
+              title: new Text('Relationship'),
+              onTap: (){
+                Navigator.push(context, new MaterialPageRoute(
+                  builder: (BuildContext context) => new Relationship())
+                );
+              },
+            ),
+            new Divider(
+              color: Colors.black,
+              height: 5.0,
+            ),
+            new ListTile(
+              title: new Text('Directions'),
+            ),
+            new Divider(
+              color: Colors.black,
+              height: 5.0,
+            ),
+          ],
+        ),
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
