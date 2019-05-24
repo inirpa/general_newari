@@ -1,20 +1,36 @@
 import 'package:flutter/material.dart';
 
 class WordDetail extends StatefulWidget {
+  String appBarTitle;
+  WordDetail(this.appBarTitle);
+
   @override
-  WordDetailState createState() => WordDetailState();
+  WordDetailState createState() => WordDetailState(this.appBarTitle);
 }
 
 class WordDetailState extends State<WordDetail> {
+  String appBarTitle;
   TextEditingController englishController = TextEditingController();
   TextEditingController newariController = TextEditingController();
+
+  WordDetailState(this.appBarTitle);
 
   @override
   Widget build(BuildContext context) {
     TextStyle textStyle = Theme.of(context).textTheme.subhead;
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: (){
+        toPreviousScreen();
+      },
+    child: Scaffold(
       appBar: AppBar(
-        title: Text('Detail page'),
+        title: Text(appBarTitle),
+        leading: IconButton(
+          icon: Icon(Icons.home),
+          onPressed: (){
+            toPreviousScreen();
+          }
+        )
       ),
       body:Padding(
           padding: EdgeInsets.all(10.0),
@@ -94,6 +110,12 @@ class WordDetailState extends State<WordDetail> {
             ],
           ),
         )
+    )
     );
+  }
+
+  void toPreviousScreen(){
+    debugPrint('Pop and move to previous screen');
+    Navigator.pop(context);
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:general_newari/screens/word_detail.dart';
 
 class CategoryList extends StatefulWidget {
   @override
@@ -16,12 +17,14 @@ class CategoryListState extends State<CategoryList> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Categories'),
+        leading: Icon(Icons.category),
       ),
 
       body: wordListView(),
       floatingActionButton: FloatingActionButton (
         onPressed: (){
           debugPrint('clicked');
+          navigateToWords('From floating');
         },
         tooltip: ('Speak'),
         child: Icon(Icons.mic),
@@ -48,6 +51,7 @@ class CategoryListState extends State<CategoryList> {
             trailing: Icon(Icons.delete, color : Colors.blueGrey),
             onTap: (){
               debugPrint('dummy');
+              navigateToWords('From individual list');
             },
           ),
         );
@@ -55,4 +59,9 @@ class CategoryListState extends State<CategoryList> {
     );
   }
 
+  void navigateToWords(String title){
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return WordDetail(title);
+    }));
+  }
 }
