@@ -36,7 +36,7 @@ class CategoryListState extends State<CategoryList> {
           navigateToWords(Categories('',''), 'New category');
         },
         tooltip: ('Speak'),
-        child: Icon(Icons.mic),
+        child: Icon(Icons.add),
       )
       
     );
@@ -53,7 +53,7 @@ class CategoryListState extends State<CategoryList> {
           child: ListTile(
             leading: CircleAvatar(
               backgroundColor: Colors.blueAccent,
-              child: Icon(Icons.keyboard_arrow_up),
+              child: Icon(Icons.keyboard_arrow_right),
             ),
             title: Text(this.categories[position].name, style: nameStyle,),
             subtitle: Text(this.categories[position].date),
@@ -64,7 +64,7 @@ class CategoryListState extends State<CategoryList> {
               },
             ),
             onTap: (){
-              debugPrint('dummy');
+              debugPrint('Detail view');
               navigateToWords(this.categories[position],'Edit ');
             },
           ),
