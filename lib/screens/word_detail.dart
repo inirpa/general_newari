@@ -18,6 +18,7 @@ class WordDetailState extends State<WordDetail> {
   Categories categories;
   TextEditingController englishController = TextEditingController();
   TextEditingController newariController = TextEditingController();
+  TextEditingController iconController = TextEditingController();
 
   WordDetailState(this.categories, this.appBarTitle);
 
@@ -27,6 +28,7 @@ class WordDetailState extends State<WordDetail> {
 
     englishController.text = categories.name;
     newariController.text = categories.description;
+    iconController.text = categories.icon;
 
     return WillPopScope(
       onWillPop: (){
@@ -84,6 +86,24 @@ class WordDetailState extends State<WordDetail> {
               ),
               Padding(
                 padding: EdgeInsets.all(10.0),
+                child: TextField(
+                  controller: iconController,
+                  style: textStyle,
+                  onChanged: (value){
+                    debugPrint('some update');
+                    updateIcon();
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Category icon',
+                    labelStyle: textStyle,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.0)
+                    )
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(10.0),
                 child: Row(children: <Widget>[
                   Expanded(
                     child: RaisedButton(
@@ -118,9 +138,9 @@ class WordDetailState extends State<WordDetail> {
                        },
                     ),
                   ),
-                  
-                ],),
-              )
+                ],
+                ),
+              ),
             ],
           ),
         )
@@ -139,6 +159,10 @@ class WordDetailState extends State<WordDetail> {
 
   void updateDescription(){
     categories.description = newariController.text;
+  }
+
+  void updateIcon(){
+    categories.icon = iconController.text;
   }
 
   void _save() async{

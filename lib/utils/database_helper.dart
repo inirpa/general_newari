@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:async';
 import 'dart:io';
@@ -11,6 +10,7 @@ class DatabaseHelper{
   
   String tableName = 'categories';
   String id = 'id';
+  String icon = 'icon';
   String name = 'name';
   String description = 'description';
   String date = 'date';
@@ -33,15 +33,15 @@ class DatabaseHelper{
 
   Future<Database> initializeDatabase() async{
     Directory directory = await getApplicationDocumentsDirectory();
-    String path = directory.path + 'general_newari.db';
+    String path = directory.path + 'general_newari_new.db';
 
     var newariDatabase = await openDatabase(path, version: 1, onCreate: _createDB);
     return newariDatabase;
   }
   
   void _createDB(Database db, int newVersion) async{
-    await db.execute('CREATE TABLE $tableName($id INTEGER PRIMARY KEY AUTOINCREMENT, $name TEXT, $description TEXT, $date TEXT)');
-    // await db.execute('CREATE TABLE categories(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, date TEXT)');
+    // await db.execute('CREATE TABLE $tableName($id INTEGER PRIMARY KEY AUTOINCREMENT, $name TEXT, $icon TEXT, $description TEXT, $date TEXT)');
+    await db.execute('CREATE TABLE categories(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, icon TEXT, description TEXT, date TEXT)');
   }
 
   Future<List<Map<String, dynamic>>> getCategoryMapList() async{

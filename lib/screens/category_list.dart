@@ -53,7 +53,7 @@ class CategoryListState extends State<CategoryList> {
           child: ListTile(
             leading: CircleAvatar(
               backgroundColor: Colors.blueAccent,
-              child: Icon(Icons.keyboard_arrow_right),
+              child: getCategoryIcon(this.categories[position].icon),
             ),
             title: Text(this.categories[position].name, style: nameStyle,),
             subtitle: Text(this.categories[position].date),
@@ -65,12 +65,17 @@ class CategoryListState extends State<CategoryList> {
             ),
             onTap: (){
               debugPrint('Detail view');
+              debugPrint(categories[position].icon);
               navigateToWords(this.categories[position],'Edit ');
             },
           ),
         );
       },
     );
+  }
+
+  Icon getCategoryIcon(String icon){
+    return Icon(Icons.gavel);
   }
 
   void navigateToWords(Categories category, String title) async {
