@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
+import 'package:general_newari/models/categories.dart';
 import 'package:general_newari/screens/word_detail.dart';
+import 'package:general_newari/utils/database_helper.dart';
+import 'package:sqflite/sqflite.dart';
 
 class CategoryList extends StatefulWidget {
   @override
@@ -11,9 +14,15 @@ class CategoryList extends StatefulWidget {
 }
 
 class CategoryListState extends State<CategoryList> {
+  DatabaseHelper databaseHelper = DatabaseHelper();
+  List<Categories> categories;
   int count = 0;
   @override
   Widget build(BuildContext context) {
+    if(categories==null){
+      categories = List<Categories>();
+      updateCategoryView();
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text('Categories'),
@@ -24,7 +33,7 @@ class CategoryListState extends State<CategoryList> {
       floatingActionButton: FloatingActionButton (
         onPressed: (){
           debugPrint('clicked');
-          navigateToWords('From floating');
+          navigateToWords(Categories('',''), 'New category');
         },
         tooltip: ('Speak'),
         child: Icon(Icons.mic),
@@ -34,7 +43,7 @@ class CategoryListState extends State<CategoryList> {
   }
 
   ListView wordListView(){
-    TextStyle titleStyle = Theme.of(context).textTheme.subhead;
+    TextStyle nameStyle = Theme.of(context).textTheme.subhead;
     return ListView.builder(
       itemCount: count,
       itemBuilder: (BuildContext context, int position){
@@ -46,12 +55,17 @@ class CategoryListState extends State<CategoryList> {
               backgroundColor: Colors.blueAccent,
               child: Icon(Icons.keyboard_arrow_up),
             ),
-            title: Text('First word'),
-            subtitle: Text('its subtitle'),
-            trailing: Icon(Icons.delete, color : Colors.blueGrey),
+            title: Text(this.categories[position].name, style: nameStyle,),
+            subtitle: Text(this.categories[position].date),
+            trailing: GestureDetector(
+              child: Icon(Icons.delete, color : Colors.blueGrey),
+              onTap: (){
+                _deleteCategory(context, categories[position]);
+              },
+            ),
             onTap: (){
               debugPrint('dummy');
-              navigateToWords('From individual list');
+              navigateToWords(this.categories[position],'Edit ');
             },
           ),
         );
@@ -59,9 +73,39 @@ class CategoryListState extends State<CategoryList> {
     );
   }
 
-  void navigateToWords(String title){
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return WordDetail(title);
+  void navigateToWords(Categories category, String title) async {
+    bool result = await Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return WordDetail(category, title);
     }));
+    
+    if(result == true){
+      updateCategoryView();
+    }
+  }
+
+  void _deleteCategory(BuildContext context, Categories category) async {
+    int result = await databaseHelper.deleteCategory(category.id);
+    if(result !=0){
+      _showSnackBar(context, 'Category deleted successfully');
+      updateCategoryView();
+    }
+  }
+
+  void _showSnackBar(BuildContext context, String message){
+    final snackBar = SnackBar(content: Text(message));
+    Scaffold.of(context).showSnackBar(snackBar);
+  }
+
+  void updateCategoryView(){
+    final Future<Database> dbFuture = databaseHelper.initializeDatabase();
+    dbFuture.then((database){
+      Future<List<Categories>> categoryListFuture = databaseHelper.getCategoryList();
+      categoryListFuture.then((categoryList){
+        setState(() {
+          this.categories = categoryList;
+          this.count = categoryList.length;
+        });
+      });
+    });
   }
 }

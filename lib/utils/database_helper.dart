@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:async';
 import 'dart:io';
@@ -14,10 +15,10 @@ class DatabaseHelper{
   String description = 'description';
   String date = 'date';
 
-
   DatabaseHelper._createInstance();
+  
   factory DatabaseHelper(){
-    if(DatabaseHelper._createInstance() == null){
+    if(_databaseHelper == null){
       _databaseHelper = DatabaseHelper._createInstance();
     }
     return _databaseHelper;
@@ -25,12 +26,12 @@ class DatabaseHelper{
 
   Future<Database> get database async{
     if(_database == null){
-      _database = await intializeDatabase();
+      _database = await initializeDatabase();
     }
     return _database;
   }
 
-  Future<Database> intializeDatabase() async{
+  Future<Database> initializeDatabase() async{
     Directory directory = await getApplicationDocumentsDirectory();
     String path = directory.path + 'general_newari.db';
 
@@ -40,6 +41,7 @@ class DatabaseHelper{
   
   void _createDB(Database db, int newVersion) async{
     await db.execute('CREATE TABLE $tableName($id INTEGER PRIMARY KEY AUTOINCREMENT, $name TEXT, $description TEXT, $date TEXT)');
+    // await db.execute('CREATE TABLE categories(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, date TEXT)');
   }
 
   Future<List<Map<String, dynamic>>> getCategoryMapList() async{
@@ -59,8 +61,8 @@ class DatabaseHelper{
     return result;
   }
 
-  Future<int> deleteCategory(int categoryId) async{
-    Database db = await this.database;
+  Future<int> deleteCategory(int categoryId) async {
+    var db = await this.database;
     var result = await db.rawDelete('DELETE FROM $tableName WHERE $id = $categoryId');
     return result;
   }
@@ -70,5 +72,16 @@ class DatabaseHelper{
     List<Map<String, dynamic>> x = await db.rawQuery('SELECT COUNT (*) FROM $tableName');
     int result = Sqflite.firstIntValue(x);
     return result;
+  }
+
+  Future<List<Categories>> getCategoryList()  async{
+    var categoryMapList = await getCategoryMapList();
+    int count = categoryMapList.length;
+
+    List<Categories> categoryList = List<Categories>();
+    for(int i=0; i<count; i++){
+      categoryList.add(Categories.fromMapObject(categoryMapList[i]));
+    }
+    return categoryList;
   }
 }

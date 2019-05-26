@@ -1,23 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:general_newari/models/categories.dart';
+import 'package:general_newari/utils/database_helper.dart';
+import 'package:intl/intl.dart';
 
 class WordDetail extends StatefulWidget {
-  String appBarTitle;
-  WordDetail(this.appBarTitle);
+  final String appBarTitle;
+  final Categories categories;
+  WordDetail(this.categories, this.appBarTitle);
 
   @override
-  WordDetailState createState() => WordDetailState(this.appBarTitle);
+  WordDetailState createState() => WordDetailState(this.categories, this.appBarTitle);
 }
 
 class WordDetailState extends State<WordDetail> {
+  DatabaseHelper databaseHelper = DatabaseHelper();
   String appBarTitle;
+  Categories categories;
   TextEditingController englishController = TextEditingController();
   TextEditingController newariController = TextEditingController();
 
-  WordDetailState(this.appBarTitle);
+  WordDetailState(this.categories, this.appBarTitle);
 
   @override
   Widget build(BuildContext context) {
     TextStyle textStyle = Theme.of(context).textTheme.subhead;
+
+    englishController.text = categories.name;
+    newariController.text = categories.description;
+
     return WillPopScope(
       onWillPop: (){
         toPreviousScreen();
@@ -43,6 +53,7 @@ class WordDetailState extends State<WordDetail> {
                   style: textStyle,
                   onChanged: (value){
                     debugPrint('some update');
+                    updateName();
                   },
                   decoration: InputDecoration(
                     labelText: 'English word',
@@ -60,6 +71,7 @@ class WordDetailState extends State<WordDetail> {
                   style: textStyle,
                   onChanged: (value){
                     debugPrint('some update');
+                    updateDescription();
                   },
                   decoration: InputDecoration(
                     labelText: 'Newari translated word',
@@ -84,6 +96,7 @@ class WordDetailState extends State<WordDetail> {
                        onPressed: (){
                          setState(() {
                           debugPrint('update');
+                          _save();
                          });
                        },
                     ),
@@ -100,6 +113,7 @@ class WordDetailState extends State<WordDetail> {
                        onPressed: (){
                          setState(() {
                            debugPrint('delete');
+                           _delete();
                          });
                        },
                     ),
@@ -116,6 +130,57 @@ class WordDetailState extends State<WordDetail> {
 
   void toPreviousScreen(){
     debugPrint('Pop and move to previous screen');
-    Navigator.pop(context);
+    Navigator.pop(context, true);
   }
-}
+
+  void updateName(){
+    categories.name = englishController.text;
+  }
+
+  void updateDescription(){
+    categories.description = newariController.text;
+  }
+
+  void _save() async{
+    int result;
+    toPreviousScreen();
+    categories.date = DateFormat.yMMMMd().format(DateTime.now());
+    if(categories.id != null){
+      result = await databaseHelper.updateCategory(categories);
+    }else{
+      result = await databaseHelper.insertCategory(categories);
+    }
+
+    if(result != 0){
+      _showAlertDialog('Success','Category upated');
+    }else{
+      _showAlertDialog('Error','Operation failed');
+    }
+  }
+
+  void _delete() async{
+    toPreviousScreen();
+    if(categories.id == null){
+      _showAlertDialog('Error', 'Category not deleted');
+      return;
+    }else{
+      int result = await databaseHelper.deleteCategory(categories.id);
+      if(result != 0){
+        _showAlertDialog('Success','Category delted');
+      }else{
+        _showAlertDialog('Error','Operation failed');
+      }
+    }
+  }
+
+  void _showAlertDialog(String title, String message){
+    AlertDialog alertDialog = AlertDialog(
+      title: Text(title),
+      content: Text(message),
+    );
+    showDialog(
+      context: context,
+      builder: (_) => alertDialog,
+    );
+  }
+} 
