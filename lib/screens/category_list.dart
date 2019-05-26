@@ -69,13 +69,21 @@ class CategoryListState extends State<CategoryList> {
               navigateToWords(this.categories[position],'Edit ');
             },
           ),
+          
         );
       },
     );
   }
 
   Icon getCategoryIcon(String icon){
-    return Icon(Icons.gavel);
+    switch (icon) {
+      case 'add':
+        return Icon(Icons.add);
+      case 'gavel':
+        return Icon(Icons.gavel);
+      default:
+        return Icon(Icons.verified_user);
+    }
   }
 
   void navigateToWords(Categories category, String title) async {

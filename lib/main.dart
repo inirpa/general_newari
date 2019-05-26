@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:general_newari/screens/category_list.dart';
+import 'package:general_newari/screens/user_profile.dart';
 import 'package:general_newari/screens/word_detail.dart';
 
 void main() {
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.deepOrange ,
       ),
-      home: CategoryList(),
+      home: UserProfile(),
     );
   }
 }
